@@ -16,8 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'websiteguided@gmail.com',
-    pass: 'thyh bgjo vmuk irnn'
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
 
@@ -28,7 +28,7 @@ app.post('/SubmitCase', upload.any(), async (req, res) => {
 
     const mailOptions = {
       from: `"Case Submission" <${process.env.EMAIL_USER}>`,
-      to: 'guideme@guided4excellence.com',
+      to: 'saadsaadfast34@gmail.com',
       subject: 'New Case Submission',
       html: generateEmailHtml(formData),
       attachments: files.map(file => ({
