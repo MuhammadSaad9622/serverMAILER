@@ -17,8 +17,8 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
 app.post('/SubmitCase', upload.any(), async (req, res) => {
@@ -31,10 +31,10 @@ app.post('/SubmitCase', upload.any(), async (req, res) => {
       to: 'guideme@guided4excellence.com',
       subject: 'New Case Submission',
       html: generateEmailHtml(formData),
-      attachments: files.map(file => ({
+      attachments: files.map((file) => ({
         filename: file.originalname,
-        content: file.buffer
-      }))
+        content: file.buffer,
+      })),
     };
 
     await transporter.sendMail(mailOptions);
@@ -48,12 +48,27 @@ app.post('/SubmitCase', upload.any(), async (req, res) => {
 function generateEmailHtml(formData) {
   return `
     <h1>New Case Submission</h1>
-    ${Object.entries(formData).map(([key, value]) => `
+    ${Object.entries(formData)
+      .map(
+        ([key, value]) => `
       <p><strong>${key}:</strong> ${value}</p>
-    `).join('')}
+    `
+      )
+      .join('')}
     <p>Attachments: ${formData.attachment ? formData.attachment : 'None'}</p>
   `;
 }
 
-// Export the Express app for Vercel
+// Added code: Basic endpoint and server listen
+const port = process.env.PORT || 4000;
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
+
+// If needed for serverless deployments (e.g., Vercel), export the Express app
 module.exports = app;
