@@ -186,7 +186,7 @@ app.post('/SubmitCase', upload.any(), async (req, res) => {
     // Send email
     const mailOptions = {
       from: `"Case Submission" <${process.env.EMAIL_USER}>`,
-      to: process.env.RECIPIENT_EMAIL || 'saadnadeem962@gmail.com',
+      to: process.env.RECIPIENT_EMAIL || 'guideme@guided4excellence.com',
       subject: 'New Case Submission',
       html: generateEmailHtml(formData),
       attachments: attachments,
