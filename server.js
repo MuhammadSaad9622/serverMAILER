@@ -33,6 +33,14 @@ app.post('/SubmitCase', upload.any(), async (req, res) => {
     // Generate PDF
     const pdfBytes = await generatePdf(formData);
 
+    const today = new Date();
+    if (formData.birthDate && new Date(formData.birthDate) >= today) {
+      return res.status(400).json({ error: 'Date of Birth must be in the past' });
+    }
+    if (formData.surgeryDate && new Date(formData.surgeryDate) <= today) {
+      return res.status(400).json({ error: 'Surgery Date must be in the future' });
+    }
+
     // Prepare email attachments
     const attachments = [
       {
@@ -47,7 +55,7 @@ app.post('/SubmitCase', upload.any(), async (req, res) => {
 
     const mailOptions = {
       from: `"Case Submission" <${process.env.EMAIL_USER}>`,
-      to: 'guideme@guided4excellence.com',
+      to: 'saadnadeem962@gmail.com',
       subject: 'New Case Submission',
       html: generateEmailHtml(formData),
       attachments: attachments,
@@ -129,7 +137,7 @@ async function generatePdf(formData) {
     yPosition -= sectionGap;
     
     const patientFields = [
-      'patientName', 'birthDate', 'surgeryDate', 'dueDate'
+      'patientName', 'birthDate', 'surgeryDate'
     ];
     
     patientFields.forEach(field => {
@@ -157,7 +165,7 @@ async function generatePdf(formData) {
     yPosition -= sectionGap;
     
     const planningFields = [
-      'surgicalGuideType', 'numberOfImplants', 'modelsDeliveryMethod'
+      'surgicalGuideType', 'numberOfImplants', 'expeditedRequest'
     ];
     
     planningFields.forEach(field => {
@@ -185,8 +193,7 @@ async function generatePdf(formData) {
     yPosition -= sectionGap;
     
     const implantFields = [
-      'implantSystem', 'drillKitType', 'implantPositions', 
-      'implantDimensions', 'tissueFlapType', 'expeditedRequest'
+      'implantSystem','implantPositions','implantDimensions','tissueFlapType'
     ];
     
     implantFields.forEach(field => {
@@ -214,7 +221,7 @@ async function generatePdf(formData) {
     yPosition -= sectionGap;
     
     const doctorFields = [
-      'doctorName', 'doctorPhone', 'doctorAddress', 'doctorLicense'
+    'doctorName','doctorLicense','doctorPhone','doctorAddress','doctorCity','doctorState','doctorZip'
     ];
     
     doctorFields.forEach(field => {
@@ -262,25 +269,24 @@ function generateEmailHtml(formData) {
       
       <div style="margin-bottom: 30px;">
         <h2 style="color: #0c1152;">Patient Information</h2>
-        ${renderFormFields(formData, ['patientName', 'birthDate', 'surgeryDate', 'dueDate'])}
+        ${renderFormFields(formData, ['patientName','birthDate','surgeryDate'])}
       </div>
       
       <div style="margin-bottom: 30px;">
         <h2 style="color: #0c1152;">Planning Information</h2>
-        ${renderFormFields(formData, ['surgicalGuideType', 'numberOfImplants', 'modelsDeliveryMethod'])}
+        ${renderFormFields(formData, ['surgicalGuideType','numberOfImplants','expeditedRequest'])}
       </div>
       
       <div style="margin-bottom: 30px;">
         <h2 style="color: #0c1152;">Implant System</h2>
         ${renderFormFields(formData, [
-          'implantSystem', 'drillKitType', 'implantPositions', 
-          'implantDimensions', 'tissueFlapType', 'expeditedRequest'
+          'implantSystem','implantPositions','implantDimensions','tissueFlapType'
         ])}
       </div>
       
       <div style="margin-bottom: 30px;">
         <h2 style="color: #0c1152;">Doctor Information</h2>
-        ${renderFormFields(formData, ['doctorName', 'doctorPhone', 'doctorAddress', 'doctorLicense'])}
+        ${renderFormFields(formData, ['doctorName','doctorLicense','doctorPhone','doctorAddress','doctorCity','doctorState','doctorZip'])}
       </div>
       
       <p style="font-size: 12px; color: #666; margin-top: 30px;">
@@ -308,7 +314,7 @@ function renderFormFields(formData, fields) {
 const port = process.env.PORT || 4000;
 
 app.get('/', (req, res) => {
-  res.send('Hello World yup!');
+  res.send('Hello World!');
 });
 
 app.listen(port, () => {
